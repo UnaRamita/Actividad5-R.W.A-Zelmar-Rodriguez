@@ -116,7 +116,8 @@ public class RodolfoBehaviour : MonoBehaviour
 
         Bounds bounds = bodyCollider.bounds;
         Vector3 center = new Vector3(bounds.center.x, bounds.min.y - 0.05f, bounds.center.z);
-        Vector3 halfExtents = new Vector3(bounds.extents.x * 0.9f, 0.06f, bounds.extents.z * 0.9f);
+        // Mas angosta que el cuerpo para no confundir el costado de una pared con el suelo.
+        Vector3 halfExtents = new Vector3(bounds.extents.x * 0.7f, 0.06f, bounds.extents.z * 0.9f);
         int count = Physics.OverlapBoxNonAlloc(center, halfExtents, groundHits, Quaternion.identity,
             groundLayers, QueryTriggerInteraction.Ignore);
 
