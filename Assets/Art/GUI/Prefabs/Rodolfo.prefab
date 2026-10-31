@@ -276,7 +276,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 744190668523cfc4994618f77b3225ae, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Rodolfo.Game::RodolfoBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::RodolfoBehaviour
   moveSpeed: 6
   acceleration: 40
   jumpHeight: 3.5
@@ -294,4 +294,4 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea98f338e4f79f745beefbfe8b37af68, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Rodolfo.Game::RodolfoController
+  m_EditorClassIdentifier: Assembly-CSharp::RodolfoController

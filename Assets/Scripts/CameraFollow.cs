@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// Camara ortografica de scroll lateral: solo se desplaza cuando el objetivo
-// se acerca a los bordes de la pantalla y nunca muestra mas alla del nivel.
+// Camara ortografica de scroll lateral: acompana al objetivo de forma suave,
+// lo vuelve a centrar cuando se detiene y nunca muestra mas alla del nivel.
 [RequireComponent(typeof(Camera))]
 public class CameraFollow : MonoBehaviour
 {
@@ -11,14 +11,16 @@ public class CameraFollow : MonoBehaviour
     // Raiz de los bloques del nivel: sus limites se calculan a partir de sus renderers.
     public Transform levelRoot;
 
-    // Distancia (en unidades) a los bordes horizontales y verticales a partir de la cual la camara se mueve.
-    public float horizontalEdgeMargin = 4.0f;
-    public float verticalEdgeMargin = 2.5f;
+    // Distancia maxima del objetivo al centro, como fraccion de media pantalla (0 = siempre centrado, 1 = borde).
+    // Evita que el objetivo se acerque a los bordes aunque la camara vaya con retraso.
+    [Range(0, 1)]
+    public float maxScreenOffset = 0.3f;
 
     // Tiempo aproximado que tarda la camara en alcanzar su destino.
-    public float smoothTime = 0.25f;
+    public float smoothTime = 0.35f;
 
     private Camera cam;
+    private Rigidbody targetBody;
     private Bounds levelBounds;
     private Vector3 desiredPosition;
     private Vector3 currentVelocity;
@@ -26,8 +28,16 @@ public class CameraFollow : MonoBehaviour
     void Start()
     {
         cam = GetComponent<Camera>();
+        targetBody = target != null ? target.GetComponent<Rigidbody>() : null;
         levelBounds = CalculateLevelBounds();
-        desiredPosition = ClampToLevel(transform.position);
+
+        desiredPosition = transform.position;
+        if (target != null)
+        {
+            desiredPosition.x = target.position.x;
+            desiredPosition.y = target.position.y;
+        }
+        desiredPosition = ClampToLevel(desiredPosition);
         transform.position = desiredPosition;
     }
 
@@ -38,8 +48,9 @@ public class CameraFollow : MonoBehaviour
             return;
         }
 
-        desiredPosition = ClampToLevel(FollowWhenNearEdges(desiredPosition));
-        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref currentVelocity, smoothTime);
+        desiredPosition = ClampToLevel(FollowTarget(desiredPosition));
+        Vector3 position = Vector3.SmoothDamp(transform.position, desiredPosition, ref currentVelocity, smoothTime);
+        transform.position = ClampToLevel(KeepTargetNearCenter(position));
     }
 
     public Bounds LevelBounds
@@ -47,19 +58,27 @@ public class CameraFollow : MonoBehaviour
         get { return levelBounds; }
     }
 
-    // Mueve el destino de la camara solo lo necesario para que el objetivo
-    // quede a "edgeMargin" del borde de la pantalla.
-    private Vector3 FollowWhenNearEdges(Vector3 position)
+    // En X la camara siempre busca centrar al objetivo: al moverse lo acompana y al detenerse termina centrada.
+    // En Y solo se recentra cuando el objetivo esta apoyado, para no sacudirse con cada salto.
+    private Vector3 FollowTarget(Vector3 position)
     {
-        Vector3 targetPosition = target.position;
-        float halfHeight = cam.orthographicSize;
-        float halfWidth = halfHeight * cam.aspect;
+        position.x = target.position.x;
+        bool isStanding = targetBody == null || Mathf.Abs(targetBody.linearVelocity.y) < 0.1f;
+        if (isStanding)
+        {
+            position.y = target.position.y;
+        }
+        return position;
+    }
 
-        float maxOffsetX = Mathf.Max(0, halfWidth - horizontalEdgeMargin);
-        float maxOffsetY = Mathf.Max(0, halfHeight - verticalEdgeMargin);
+    // Limita el retraso del suavizado para que el objetivo no se acerque a los bordes de la pantalla.
+    private Vector3 KeepTargetNearCenter(Vector3 position)
+    {
+        float maxOffsetY = cam.orthographicSize * maxScreenOffset;
+        float maxOffsetX = cam.orthographicSize * cam.aspect * maxScreenOffset;
 
-        position.x = Mathf.Clamp(position.x, targetPosition.x - maxOffsetX, targetPosition.x + maxOffsetX);
-        position.y = Mathf.Clamp(position.y, targetPosition.y - maxOffsetY, targetPosition.y + maxOffsetY);
+        position.x = Mathf.Clamp(position.x, target.position.x - maxOffsetX, target.position.x + maxOffsetX);
+        position.y = Mathf.Clamp(position.y, target.position.y - maxOffsetY, target.position.y + maxOffsetY);
         return position;
     }
 

@@ -67,9 +67,10 @@ Se sigue el mismo esquema que el TP anterior: el *Behaviour* expone una interfaz
 
 ### Cámara (`CameraFollow`)
 
-- La cámara es ortográfica y tiene vista lateral.
-- No sigue a Rodolfo todo el tiempo: solo se desplaza cuando Rodolfo queda a menos de `horizontalEdgeMargin` (4 u) de un borde lateral o a menos de `verticalEdgeMargin` (2,5 u) del borde superior o inferior.
-- El movimiento se suaviza con `Vector3.SmoothDamp`.
+- La cámara es ortográfica (tamaño 8) y tiene vista lateral. Con ese tamaño se ve toda la altura del nivel.
+- Horizontalmente siempre busca centrar a Rodolfo y el movimiento se suaviza con `Vector3.SmoothDamp` (`smoothTime` = 0,35 s). Mientras camina, la cámara lo acompaña con un pequeño retraso. Cuando se detiene, la cámara sigue un poco más y lo deja centrado.
+- `maxScreenOffset` (0,3) limita ese retraso: Rodolfo nunca se aleja del centro más del 30 % de media pantalla, así que no llega a los bordes.
+- Verticalmente solo se recentra cuando Rodolfo está apoyado, para que la cámara no se sacuda con cada salto.
 - Los límites del nivel se calculan al iniciar uniendo los `Renderer` de todos los bloques de `Level`. La posición de la cámara se limita para que la vista nunca salga de esos límites.
 
 ### Fin de nivel (`LevelEndMarker`)

@@ -680,7 +680,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 609876155485e204bb9788e4924b4fea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Rodolfo.Game::LevelEndMarker
+  m_EditorClassIdentifier: Assembly-CSharp::LevelEndMarker
   successMessage: {fileID: 1762019818}
   tolerance: 0.15
 --- !u!65 &352007297
@@ -2329,12 +2329,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd526e37564c1474c80ac058ae9486e1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Rodolfo.Game::CameraFollow
+  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 1251047726}
   levelRoot: {fileID: 1629824760}
-  horizontalEdgeMargin: 4
-  verticalEdgeMargin: 2.5
-  smoothTime: 0.25
+  maxScreenOffset: 0.3
+  smoothTime: 0.35
 --- !u!20 &1737012984
 Camera:
   m_ObjectHideFlags: 0
@@ -2370,7 +2369,7 @@ Camera:
   far clip plane: 50
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 8
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
