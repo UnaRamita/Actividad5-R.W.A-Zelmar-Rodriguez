@@ -279,7 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RodolfoBehaviour
   moveSpeed: 6
   acceleration: 40
-  jumpHeight: 3.5
+  jumpHeight: 4
+  gravityScale: 2.2
   groundLayers:
     serializedVersion: 2
     m_Bits: 4294967295

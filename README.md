@@ -62,7 +62,8 @@ Se sigue el mismo esquema que el TP anterior: el *Behaviour* expone una interfaz
 - El movimiento usa un `Rigidbody` con gravedad. En `FixedUpdate` la velocidad horizontal se acerca a la deseada con una aceleración (sin arranques bruscos).
 - El `Rigidbody` congela la posición en Z y todas las rotaciones, así que Rodolfo solo se mueve en el plano lateral y no puede desplazarse en profundidad.
 - La detección de colisión es continua, para no atravesar plataformas.
-- **Salto**: la velocidad vertical se calcula para alcanzar `jumpHeight` (3,5 unidades). Solo se aplica si Rodolfo está apoyado. Para saberlo se revisa una franja delgada debajo de los pies con `Physics.OverlapBox`. Durante 0,15 s después de saltar se ignora el suelo, así no se puede encadenar un segundo salto al despegar. Un pedido de salto en el aire se descarta, por lo que no hay saltos infinitos.
+- Rodolfo usa la gravedad del proyecto multiplicada por `gravityScale` (2,2), con una fuerza extra en `FixedUpdate`. Así el salto sube y baja más rápido: dura unos 1,2 s en el aire.
+- **Salto**: la velocidad vertical se calcula con esa gravedad aumentada para alcanzar `jumpHeight` (4 unidades). Solo se aplica si Rodolfo está apoyado. Para saberlo se revisa una franja delgada debajo de los pies con `Physics.OverlapBox`. Durante 0,15 s después de saltar se ignora el suelo, así no se puede encadenar un segundo salto al despegar. Un pedido de salto en el aire se descarta, por lo que no hay saltos infinitos.
 - Rodolfo usa un material físico sin fricción para no quedar "pegado" a las paredes.
 
 ### Cámara (`CameraFollow`)

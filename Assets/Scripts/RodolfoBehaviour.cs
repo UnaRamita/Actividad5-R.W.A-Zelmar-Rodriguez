@@ -13,7 +13,10 @@ public class RodolfoBehaviour : MonoBehaviour
     public float acceleration = 40.0f;
 
     // Altura maxima del salto en unidades (la base de Rodolfo sube esta distancia).
-    public float jumpHeight = 3.5f;
+    public float jumpHeight = 4.0f;
+
+    // Multiplicador de la gravedad del proyecto: mas alto = sube y cae mas rapido.
+    public float gravityScale = 2.2f;
 
     // Superficies sobre las que Rodolfo puede apoyarse para saltar.
     public LayerMask groundLayers = ~0;
@@ -45,6 +48,7 @@ public class RodolfoBehaviour : MonoBehaviour
         }
 
         IsGrounded = CheckGrounded();
+        ApplyExtraGravity();
         ApplyHorizontalMovement();
         ApplyJump();
     }
@@ -69,6 +73,12 @@ public class RodolfoBehaviour : MonoBehaviour
         body.constraints = RigidbodyConstraints.FreezeAll;
     }
 
+    // El Rigidbody ya aplica la gravedad normal; se suma la parte extra para llegar a gravityScale.
+    private void ApplyExtraGravity()
+    {
+        body.AddForce(Physics.gravity * (gravityScale - 1.0f), ForceMode.Acceleration);
+    }
+
     private void ApplyHorizontalMovement()
     {
         Vector3 velocity = body.linearVelocity;
@@ -85,7 +95,8 @@ public class RodolfoBehaviour : MonoBehaviour
         if (jumpRequested && IsGrounded)
         {
             Vector3 velocity = body.linearVelocity;
-            velocity.y = Mathf.Sqrt(2.0f * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            // Velocidad inicial necesaria para alcanzar jumpHeight con la gravedad aumentada.
+            velocity.y = Mathf.Sqrt(2.0f * Mathf.Abs(Physics.gravity.y) * gravityScale * jumpHeight);
             body.linearVelocity = velocity;
             IsGrounded = false;
             lastJumpTime = Time.time;
